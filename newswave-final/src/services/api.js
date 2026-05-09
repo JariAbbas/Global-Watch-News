@@ -47,3 +47,13 @@ export const newsAPI = {
   incrementViews:(id)                 => request(`/api/news/${id}/views`,   { method: 'PATCH' }),
   remove:        (id)                 => request(`/api/news/${id}`,         { method: 'DELETE' }),
 }
+
+export const weatherAPI = {
+  getWeather: (city) => request(`/weather?city=${encodeURIComponent(city)}`)
+}
+
+export const liveAPI = {
+  get:    ()     => request('/api/live'),
+  save:   (data) => request('/api/live', { method: 'POST', body: JSON.stringify(data) }),
+  update: (data) => request('/api/live', { method: 'PUT',  body: JSON.stringify(data) }),
+}

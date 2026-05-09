@@ -1,13 +1,18 @@
 package org.acme.entity;
 
 import io.quarkus.hibernate.orm.panache.PanacheEntity;
+import io.quarkus.hibernate.orm.panache.PanacheEntityBase;
 import jakarta.persistence.*;
 import java.time.LocalDateTime;
 import java.util.List;
 
 @Entity
 @Table(name = "news")
-public class News extends PanacheEntity {
+public class News extends PanacheEntityBase {
+
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY) // Best for Supabase
+    public Long id;
 
     @Column(nullable = false, length = 500)
     public String title;

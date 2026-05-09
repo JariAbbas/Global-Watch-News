@@ -38,7 +38,7 @@
               <NewsCard v-for="article in articles.slice(1)" :key="article.id" :article="article" />
             </div>
             <div v-if="!articles.length" class="empty-state">
-              <div class="empty-icon">📰</div>
+              <div class="empty-icon"></div>
               <h3>No stories yet</h3>
               <router-link to="/" class="btn btn-primary" style="margin-top:20px;">Back to Home</router-link>
             </div>

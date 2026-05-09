@@ -24,6 +24,10 @@
           <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="18"><path d="M13 2L3 14h9l-1 8 10-12h-9l1-8z"/></svg>
           <span v-if="!sidebarCollapsed">Tickers</span>
         </router-link>
+        <router-link to="/admin/live" class="nav-item" active-class="active">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="18"><circle cx="12" cy="12" r="10"/><polygon points="10 8 16 12 10 16 10 8"/></svg>
+          <span v-if="!sidebarCollapsed">Live TV</span>
+        </router-link>
         <router-link to="/admin/news" class="nav-item" active-class="active">
           <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="18"><path d="M4 22h16a2 2 0 0 0 2-2V4a2 2 0 0 0-2-2H8a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2z"/><path d="M16 2v4"/><path d="M8 2v4"/><path d="M3 10h18"/></svg>
           <span v-if="!sidebarCollapsed">News Articles</span>

@@ -4,98 +4,50 @@
       <div class="weather-hero-bg"></div>
       <div class="container weather-hero-content">
         <h1 class="weather-page-title">Weather Center</h1>
-        <p class="weather-hero-sub">Accurate forecasts powered by NewsWave Meteorological Division</p>
+        <p class="weather-hero-sub">Live meteorological data for your selected city.</p>
 
-        <!-- Current City -->
-        <div class="weather-main-card">
+        <!-- Main Weather Card -->
+        <div v-if="weather" class="weather-main-card animate-fade-in-up">
           <div class="wm-left">
             <div class="wm-location">
               <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="18"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"/><circle cx="12" cy="10" r="3"/></svg>
-              Karachi, Sindh, PK
+              {{ weather.location || 'Unknown' }}
             </div>
-            <div class="wm-temp">28°</div>
-            <div class="wm-feel">Feels like 31°C · Humidity 68%</div>
-            <div class="wm-condition">☀️ Sunny & Clear</div>
+            <div class="wm-temp">{{ weather.temp || '--' }}</div>
+            <div class="wm-feel">Feels like {{ weather.feelsLike || '--' }} · Humidity {{ weather.humidity || '--' }}</div>
+            <div class="wm-condition">☀️ {{ weather.condition || '--' }}</div>
             <div class="wm-meta">
-              <span>Wind: 12 km/h NW</span>
+              <span>Wind: {{ weather.wind || '--' }}</span>
               <span>·</span>
-              <span>UV Index: 8 (Very High)</span>
-              <span>·</span>
-              <span>Visibility: 16 km</span>
+              <span>Visibility: {{ weather.visibility || '--' }}</span>
             </div>
           </div>
           <div class="wm-right">
-            <div class="wm-sun-info">
-              <div class="sun-row">
-                <span class="sun-label">🌅 Sunrise</span>
-                <span class="sun-val">06:14 AM</span>
-              </div>
-              <div class="sun-row">
-                <span class="sun-label">🌇 Sunset</span>
-                <span class="sun-val">06:47 PM</span>
-              </div>
-              <div class="sun-row">
-                <span class="sun-label">🌕 Moon</span>
-                <span class="sun-val">Waxing Gibbous</span>
-              </div>
-              <div class="sun-row">
-                <span class="sun-label">💧 Precip</span>
-                <span class="sun-val">0% chance</span>
-              </div>
+             <div class="wm-sun-info">
+              <div class="sun-row"><span class="sun-label">🌅 Sunrise</span><span class="sun-val">06:14 AM</span></div>
+              <div class="sun-row"><span class="sun-label">🌇 Sunset</span><span class="sun-val">06:47 PM</span></div>
+              <div class="sun-row"><span class="sun-label">💧 Precip</span><span class="sun-val">0%</span></div>
             </div>
           </div>
         </div>
+        <!-- Skeleton loader for initial load and when switching cities -->
+        <div v-else class="weather-main-card skeleton"></div>
       </div>
     </div>
 
     <div class="container weather-body">
-      <!-- Hourly -->
-      <div class="section-header">
-        <h2 class="section-title">Hourly Forecast</h2>
-      </div>
-      <div class="hourly-scroll">
-        <div class="hourly-track">
-          <div v-for="h in hourly" :key="h.time" class="hourly-card" :class="{ now: h.now }">
-            <div class="h-time">{{ h.time }}</div>
-            <div class="h-icon">{{ h.icon }}</div>
-            <div class="h-temp">{{ h.temp }}</div>
-            <div class="h-rain">{{ h.rain }}</div>
-          </div>
-        </div>
-      </div>
-
-      <div class="divider"></div>
-
-      <!-- 7-day -->
-      <div class="section-header">
-        <h2 class="section-title">7-Day Forecast</h2>
-      </div>
-      <div class="forecast-list">
-        <div v-for="day in sevenDay" :key="day.day" class="forecast-row">
-          <div class="fc-day">{{ day.day }}</div>
-          <div class="fc-icon">{{ day.icon }}</div>
-          <div class="fc-desc">{{ day.desc }}</div>
-          <div class="fc-bar-wrap">
-            <span class="fc-low">{{ day.low }}°</span>
-            <div class="fc-bar">
-              <div class="fc-fill" :style="{ left: barLeft(day.low) + '%', width: barWidth(day.low, day.high) + '%', background: day.color }"></div>
-            </div>
-            <span class="fc-high">{{ day.high }}°</span>
-          </div>
-          <div class="fc-rain">💧 {{ day.rain }}</div>
-          <div class="fc-wind">💨 {{ day.wind }}</div>
-        </div>
-      </div>
-
-      <div class="divider"></div>
-
-      <!-- World Cities -->
-      <div class="section-header">
-        <h2 class="section-title">World Cities</h2>
-      </div>
-      <div class="cities-grid">
-        <div v-for="city in cities" :key="city.name" class="city-card card">
-          <div class="card-body">
+      <!-- Clickable Major Cities Section -->
+      <div class="major-cities-section animate-fade-in-up">
+        <h3 class="section-title">Major Cities</h3>
+        <p class="section-subtitle">Select a city to view detailed weather</p>
+        
+        <div class="cities-grid">
+          <div 
+            v-for="city in cities.slice(0, 4)" 
+            :key="city.name" 
+            class="city-card"
+            @click="fetchCityWeather(city.name)"
+          >
             <div class="city-top">
               <div>
                 <div class="city-name">{{ city.name }}</div>
@@ -103,8 +55,10 @@
               </div>
               <div class="city-icon">{{ city.icon }}</div>
             </div>
-            <div class="city-temp">{{ city.temp }}</div>
-            <div class="city-cond">{{ city.cond }}</div>
+            <div class="city-bottom">
+              <div class="city-temp">{{ city.temp }}</div>
+              <div class="city-cond">{{ city.cond }}</div>
+            </div>
           </div>
         </div>
       </div>
@@ -113,37 +67,33 @@
 </template>
 
 <script setup>
-const hourly = [
-  { time: 'Now', icon: '☀️', temp: '28°', rain: '0%', now: true },
-  { time: '10 AM', icon: '☀️', temp: '29°', rain: '0%' },
-  { time: '11 AM', icon: '🌤', temp: '30°', rain: '0%' },
-  { time: '12 PM', icon: '☀️', temp: '32°', rain: '0%' },
-  { time: '01 PM', icon: '☀️', temp: '33°', rain: '0%' },
-  { time: '02 PM', icon: '🌤', temp: '33°', rain: '5%' },
-  { time: '03 PM', icon: '⛅', temp: '31°', rain: '10%' },
-  { time: '04 PM', icon: '🌤', temp: '30°', rain: '5%' },
-  { time: '05 PM', icon: '☀️', temp: '29°', rain: '0%' },
-  { time: '06 PM', icon: '🌅', temp: '27°', rain: '0%' },
-  { time: '07 PM', icon: '🌙', temp: '25°', rain: '0%' },
-  { time: '08 PM', icon: '🌙', temp: '24°', rain: '0%' },
-  { time: '09 PM', icon: '🌙', temp: '23°', rain: '0%' },
-  { time: '10 PM', icon: '🌙', temp: '22°', rain: '0%' },
-  { time: '11 PM', icon: '🌙', temp: '21°', rain: '0%' },
-]
+import { ref, onMounted } from 'vue'
+import { weatherAPI } from '../services/api.js'
 
-const sevenDay = [
-  { day: 'Today', icon: '☀️', desc: 'Sunny', low: 22, high: 33, rain: '0%', wind: '12 km/h', color: '#f59e0b' },
-  { day: 'Sunday', icon: '⛅', desc: 'Partly Cloudy', low: 21, high: 30, rain: '5%', wind: '15 km/h', color: '#60a5fa' },
-  { day: 'Monday', icon: '🌧️', desc: 'Light Rain', low: 19, high: 26, rain: '70%', wind: '20 km/h', color: '#3b82f6' },
-  { day: 'Tuesday', icon: '⛅', desc: 'Mostly Cloudy', low: 20, high: 28, rain: '20%', wind: '14 km/h', color: '#94a3b8' },
-  { day: 'Wednesday', icon: '☀️', desc: 'Clear', low: 21, high: 31, rain: '0%', wind: '10 km/h', color: '#f59e0b' },
-  { day: 'Thursday', icon: '☀️', desc: 'Sunny', low: 22, high: 32, rain: '0%', wind: '8 km/h', color: '#f59e0b' },
-  { day: 'Friday', icon: '🌤', desc: 'Partly Sunny', low: 21, high: 30, rain: '10%', wind: '12 km/h', color: '#fbbf24' },
-]
+const weather = ref(null)
 
-function barLeft(low) { return ((low - 15) / 25) * 100 }
-function barWidth(low, high) { return ((high - low) / 25) * 100 }
+// Function to handle fetching weather for any city
+const fetchCityWeather = async (cityName) => {
+  // Set weather to null temporarily to trigger the skeleton loading effect
+  weather.value = null
 
+  try {
+    const data = await weatherAPI.getWeather(cityName.toLowerCase())
+    weather.value = data
+    
+    // Smooth scroll back to top if user scrolled down
+    window.scrollTo({ top: 0, behavior: 'smooth' })
+  } catch (e) {
+    console.error(`Failed to load weather for ${cityName}`, e)
+  }
+}
+
+onMounted(() => {
+  // Initial load starts with Karachi
+  fetchCityWeather('karachi')
+})
+
+// Data for small clickable cards
 const cities = [
   { name: 'London', country: 'UK', icon: '🌧️', temp: '12°C', cond: 'Rainy' },
   { name: 'New York', country: 'USA', icon: '⛅', temp: '8°C', cond: 'Cloudy' },
@@ -157,12 +107,65 @@ const cities = [
 </script>
 
 <style scoped>
+/* Define generic variables if not defined globally */
+:root {
+  --radius-lg: 16px;
+  --accent-amber: #f59e0b;
+  --accent-cyan: #06b6d4;
+  --accent-red: #e63946;
+  --text-primary: #ffffff;
+  --text-secondary: #cbd5e1;
+  --text-muted: #94a3b8;
+  --bg-card: rgba(255, 255, 255, 0.04);
+  --bg-card-hover: rgba(255, 255, 255, 0.08);
+  --border: rgba(255, 255, 255, 0.1);
+  --border-bright: rgba(255, 255, 255, 0.2);
+}
+
+* {
+  box-sizing: border-box;
+}
+
+@keyframes fadeInUp {
+  from { opacity: 0; transform: translateY(30px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+@keyframes pulse {
+  0% { transform: scale(1); }
+  50% { transform: scale(1.02); }
+  100% { transform: scale(1); }
+}
+
+.animate-fade-in-up {
+  animation: fadeInUp 0.8s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+}
+
+/* Skeleton Loading Effect */
+.skeleton {
+  height: 250px;
+  background: linear-gradient(90deg, #162032 0%, #1e2a3d 50%, #162032 100%);
+  background-size: 200% 100%;
+  animation: shimmer 1.5s infinite;
+}
+
+@keyframes shimmer {
+  0% { background-position: 200% 0; }
+  100% { background-position: -200% 0; }
+}
+
+.wm-temp { 
+  transition: all 0.3s ease;
+  animation: pulse 4s infinite ease-in-out;
+}
+
 /* HERO */
 .weather-hero {
   position: relative;
   padding: 70px 0 50px;
   overflow: hidden;
   background: linear-gradient(135deg, #0d1b2a 0%, #162032 50%, #1a0a0a 100%);
+  color: white;
 }
 .weather-hero-bg {
   position: absolute;
@@ -172,20 +175,25 @@ const cities = [
     radial-gradient(ellipse at 80% 20%, rgba(230,57,70,0.08) 0%, transparent 50%);
   pointer-events: none;
 }
+.container {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 0 20px;
+}
 .weather-hero-content { position: relative; z-index: 1; }
 .weather-page-title {
-  font-family: var(--font-display);
   font-size: clamp(2.5rem, 5vw, 5rem);
   letter-spacing: 0.04em;
   margin-bottom: 8px;
+  margin-top: 0;
 }
-.weather-hero-sub { font-size: 0.95rem; color: var(--text-secondary); margin-bottom: 36px; }
+.weather-hero-sub { font-size: 0.95rem; color: #cbd5e1; margin-bottom: 36px; }
 
 /* MAIN CARD */
 .weather-main-card {
   background: rgba(255,255,255,0.04);
   border: 1px solid rgba(255,255,255,0.1);
-  border-radius: var(--radius-lg);
+  border-radius: 16px;
   padding: 32px;
   display: grid;
   grid-template-columns: 1fr 1fr;
@@ -197,117 +205,90 @@ const cities = [
   display: flex;
   align-items: center;
   gap: 6px;
-  font-family: var(--font-mono);
   font-size: 11px;
-  color: var(--text-muted);
+  color: #94a3b8;
   text-transform: uppercase;
   letter-spacing: 0.08em;
   margin-bottom: 8px;
 }
 .wm-temp {
-  font-family: var(--font-display);
   font-size: 6rem;
   line-height: 1;
-  color: var(--accent-amber);
+  color: #f59e0b;
   margin-bottom: 4px;
 }
-.wm-feel { font-size: 0.82rem; color: var(--text-muted); margin-bottom: 6px; }
+.wm-feel { font-size: 0.82rem; color: #94a3b8; margin-bottom: 6px; }
 .wm-condition { font-size: 1.2rem; margin-bottom: 16px; }
 .wm-meta {
   display: flex;
   gap: 10px;
   flex-wrap: wrap;
-  font-family: var(--font-mono);
   font-size: 11px;
-  color: var(--text-muted);
+  color: #94a3b8;
 }
 .sun-row {
   display: flex;
   justify-content: space-between;
   align-items: center;
   padding: 10px 0;
-  border-bottom: 1px solid var(--border);
+  border-bottom: 1px solid rgba(255,255,255,0.1);
 }
 .sun-row:last-child { border-bottom: none; }
-.sun-label { font-size: 0.85rem; color: var(--text-secondary); }
-.sun-val { font-family: var(--font-mono); font-size: 12px; color: var(--text-primary); }
+.sun-label { font-size: 0.85rem; color: #cbd5e1; }
+.sun-val { font-size: 12px; color: white; }
 
-/* BODY */
-.weather-body { padding: 60px 0 80px; }
+/* BODY & MAJOR CITIES */
+.weather-body { padding: 40px 0 80px; }
+.section-title {
+  color: white;
+  font-size: 1.5rem;
+  margin-bottom: 4px;
+}
+.section-subtitle {
+  color: #94a3b8;
+  font-size: 0.9rem;
+  margin-bottom: 24px;
+}
 
-/* HOURLY */
-.hourly-scroll { overflow-x: auto; padding-bottom: 8px; }
-.hourly-track { display: flex; gap: 10px; min-width: max-content; }
-.hourly-card {
-  background: var(--bg-card);
-  border: 1px solid var(--border);
-  border-radius: var(--radius-lg);
-  padding: 14px 16px;
-  text-align: center;
-  min-width: 72px;
-  transition: all 0.2s;
-}
-.hourly-card.now {
-  background: rgba(230,57,70,0.1);
-  border-color: var(--accent-red);
-}
-.hourly-card:hover { border-color: var(--border-bright); background: var(--bg-card-hover); }
-.h-time { font-family: var(--font-mono); font-size: 10px; color: var(--text-muted); margin-bottom: 8px; text-transform: uppercase; }
-.h-icon { font-size: 1.5rem; margin-bottom: 8px; }
-.h-temp { font-family: var(--font-display); font-size: 1.2rem; color: var(--text-primary); margin-bottom: 4px; }
-.h-rain { font-family: var(--font-mono); font-size: 10px; color: var(--accent-cyan); }
-
-/* 7-DAY */
-.forecast-list { display: flex; flex-direction: column; gap: 2px; }
-.forecast-row {
-  display: grid;
-  grid-template-columns: 100px 36px 140px 1fr 80px 100px;
-  align-items: center;
-  gap: 16px;
-  padding: 14px 16px;
-  border-radius: var(--radius-lg);
-  background: var(--bg-card);
-  border: 1px solid var(--border);
-  transition: all 0.2s;
-}
-.forecast-row:first-child { background: rgba(230,57,70,0.06); border-color: rgba(230,57,70,0.2); }
-.forecast-row:hover { background: var(--bg-card-hover); }
-.fc-day { font-weight: 600; font-size: 0.9rem; }
-.fc-icon { font-size: 1.4rem; }
-.fc-desc { font-size: 0.82rem; color: var(--text-secondary); }
-.fc-bar-wrap { display: flex; align-items: center; gap: 10px; }
-.fc-low, .fc-high { font-family: var(--font-mono); font-size: 12px; color: var(--text-muted); min-width: 28px; text-align: center; }
-.fc-bar {
-  flex: 1;
-  height: 6px;
-  background: rgba(255,255,255,0.06);
-  border-radius: 3px;
-  position: relative;
-  overflow: hidden;
-}
-.fc-fill { position: absolute; height: 100%; border-radius: 3px; top: 0; }
-.fc-rain, .fc-wind { font-family: var(--font-mono); font-size: 11px; color: var(--text-muted); }
-
-/* CITIES */
+/* CITIES GRID & CARDS */
 .cities-grid {
   display: grid;
   grid-template-columns: repeat(4, 1fr);
   gap: 16px;
 }
-.city-top { display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 12px; }
+
+.city-card {
+  background: rgba(255,255,255,0.04);
+  border: 1px solid rgba(255,255,255,0.1);
+  border-radius: 16px;
+  padding: 20px;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  color: white;
+}
+.city-card:hover {
+  background: rgba(255,255,255,0.08);
+  border-color: rgba(255,255,255,0.3);
+  transform: translateY(-4px);
+}
+.city-top { 
+  display: flex; 
+  justify-content: space-between; 
+  align-items: flex-start; 
+  margin-bottom: 12px; 
+}
 .city-name { font-weight: 700; font-size: 1rem; }
-.city-country { font-family: var(--font-mono); font-size: 10px; color: var(--text-muted); text-transform: uppercase; margin-top: 2px; }
+.city-country { font-size: 10px; color: #94a3b8; text-transform: uppercase; margin-top: 2px; }
 .city-icon { font-size: 1.8rem; }
-.city-temp { font-family: var(--font-display); font-size: 2rem; color: var(--accent-amber); }
-.city-cond { font-size: 0.82rem; color: var(--text-secondary); }
+.city-bottom { display: flex; flex-direction: column; gap: 4px; }
+.city-temp { font-size: 2rem; color: #f59e0b; font-weight: 600; line-height: 1; }
+.city-cond { font-size: 0.82rem; color: #cbd5e1; }
 
 @media (max-width: 1000px) {
   .cities-grid { grid-template-columns: repeat(2, 1fr); }
-  .forecast-row { grid-template-columns: 80px 30px 1fr auto; }
-  .fc-desc, .fc-rain, .fc-wind { display: none; }
 }
 @media (max-width: 600px) {
   .weather-main-card { grid-template-columns: 1fr; gap: 20px; }
-  .cities-grid { grid-template-columns: 1fr 1fr; }
+  .cities-grid { grid-template-columns: 1fr; }
 }
 </style>

@@ -13,6 +13,7 @@ const routes = [
   { path: '/admin/dashboard',name: 'AdminDashboard', component: () => import('../views/admin/AdminDashboard.vue'), meta: { requiresAuth: true } },
   { path: '/admin/tickers',  name: 'AdminTickers',   component: () => import('../views/admin/AdminTickers.vue'),   meta: { requiresAuth: true } },
   { path: '/admin/news',     name: 'AdminNews',       component: () => import('../views/admin/AdminNews.vue'),      meta: { requiresAuth: true } },
+  { path: '/admin/live',     name: 'AdminLive',       component: () => import('../views/admin/AdminLive.vue'),      meta: { requiresAuth: true } },
   { path: '/admin/news/add', name: 'AdminNewsAdd',    component: () => import('../views/admin/AdminNewsForm.vue'),  meta: { requiresAuth: true } },
   { path: '/admin/news/edit/:id', name: 'AdminNewsEdit', component: () => import('../views/admin/AdminNewsForm.vue'), meta: { requiresAuth: true } },
   { path: '/:pathMatch(.*)*',name: 'NotFound',   component: () => import('../views/NotFoundView.vue') }

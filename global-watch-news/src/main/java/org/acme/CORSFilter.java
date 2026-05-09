@@ -13,8 +13,13 @@ public class CORSFilter implements ContainerResponseFilter {
                        ContainerResponseContext responseContext) {
 
         responseContext.getHeaders().add("Access-Control-Allow-Origin", "http://localhost:5173");
-        responseContext.getHeaders().add("Access-Control-Allow-Headers", "origin, content-type, accept, authorization,x-requested-with");
+        responseContext.getHeaders().add("Access-Control-Allow-Headers", "origin, content-type, accept, authorization, x-requested-with");
         responseContext.getHeaders().add("Access-Control-Allow-Credentials", "true");
         responseContext.getHeaders().add("Access-Control-Allow-Methods", "GET, POST, PUT, DELETE, OPTIONS, PATCH");
+
+        // Agar request OPTIONS hai, toh status 200 (OK) set kar dein
+        if (requestContext.getMethod().equalsIgnoreCase("OPTIONS")) {
+            responseContext.setStatus(200);
+        }
     }
 }
