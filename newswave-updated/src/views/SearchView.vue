@@ -11,10 +11,10 @@
           </div>
           <button class="btn btn-primary" @click="doSearch" style="padding:14px 28px;">Search</button>
         </div>
-        <div class="search-suggestions" v-if="!query">
+        <!-- <div class="search-suggestions" v-if="!query">
           <span class="sugg-label">Trending:</span>
           <button v-for="s in suggestions" :key="s" class="sugg-btn" @click="query=s;doSearch()">{{ s }}</button>
-        </div>
+        </div> -->
       </div>
     </div>
     <div class="container search-body">

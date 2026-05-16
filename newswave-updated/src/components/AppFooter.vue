@@ -26,15 +26,13 @@
         </div>
 
         <div class="footer-col">
-          <h4 class="footer-col-title">NewsWave</h4>
+          <h4 class="footer-col-title">GlobalWatch News</h4>
           <ul>
-            <li><a href="#" class="footer-link">About Us</a></li>
-            <li><a href="#" class="footer-link">Our Journalists</a></li>
-            <li><a href="#" class="footer-link">Ethics Policy</a></li>
-            <li><a href="#" class="footer-link">Corrections</a></li>
-            <li><a href="#" class="footer-link">Contact</a></li>
-            <li><a href="#" class="footer-link">Advertise</a></li>
-            <li><a href="#" class="footer-link">Careers</a></li>
+            <li><router-link to="/about-us" class="footer-link">About Us</router-link></li>
+            <li><router-link to="/privacy-policy" class="footer-link">Privacy Policy</router-link></li>
+            <li><router-link to="/contact-us" class="footer-link">Contact Us</router-link></li>
+            <li><router-link to="/terms-conditions" class="footer-link">Terms & Conditions</router-link></li>
+            <li><router-link to="/disclaimer" class="footer-link">Disclaimer</router-link></li>
           </ul>
         </div>
 

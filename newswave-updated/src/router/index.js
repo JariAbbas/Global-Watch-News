@@ -21,9 +21,23 @@ const routes = [
   { path: '/admin/videos',   name: 'AdminVideos',     component: () => import('../views/admin/AdminVideos.vue'),    meta: { requiresAuth: true } },
   { path: '/admin/videos/add',    name: 'AdminVideoAdd',  component: () => import('../views/admin/AdminVideoForm.vue'), meta: { requiresAuth: true } },
   { path: '/admin/videos/edit/:id', name: 'AdminVideoEdit', component: () => import('../views/admin/AdminVideoForm.vue'), meta: { requiresAuth: true } },
-  { path: '/:pathMatch(.*)*',name: 'NotFound',   component: () => import('../views/NotFoundView.vue') }
-]
+  { path: '/:pathMatch(.*)*',name: 'NotFound',   component: () => import('../views/NotFoundView.vue') },
+  // Frontend routes (views/)
+  { path: '/about-us',       component: () => import('../views/AboutUs.vue') },
+  { path: '/contact-us',     component: () => import('../views/ContactUs.vue') },
+  { path: '/privacy-policy', component: () => import('../views/PrivacyPolicy.vue') },
+  { path: '/terms-conditions', component: () => import('../views/TermsConditions.vue') },
+  { path: '/disclaimer',     component: () => import('../views/Disclaimer.vue') },
 
+  // Admin routes (admin/) — auth guard ke saath
+  { path: '/admin/pages/about-us',        component: () => import('../views/admin/AdminAboutUs.vue'), meta: { requiresAuth: true } },
+  { path: '/admin/pages/contact-us',      component: () => import('../views/admin/AdminContactUs.vue'), meta: { requiresAuth: true } },
+  { path: '/admin/pages/privacy-policy',  component: () => import('../views/admin/AdminPrivacyPolicy.vue'), meta: { requiresAuth: true } },
+  { path: '/admin/pages/terms-conditions',component: () => import('../views/admin/AdminTermsConditions.vue'), meta: { requiresAuth: true } },
+  { path: '/admin/pages/disclaimer',      component: () => import('../views/admin/AdminDisclaimer.vue'), meta: { requiresAuth: true } },
+  ]
+
+  
 const router = createRouter({
   history: createWebHistory(),
   routes,

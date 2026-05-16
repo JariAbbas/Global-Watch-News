@@ -6,14 +6,14 @@
           <span class="nav-date">{{ currentDate }}</span>
           <a href="#" class="nav-edition">
             <span class="live-dot"></span>
-            LIVE UPDATES
+            
           </a>
         </div>
         <div class="nav-top-right">
-          <span class="nav-weather">☀ 28°C Karachi</span>
-          <a href="#" class="nav-social">TW</a>
+          <span class="nav-weather">The world's most trusted source for breaking news, in-depth analysis, and real-time coverage.</span>
+          <!-- <a href="#" class="nav-social">TW</a>
           <a href="#" class="nav-social">YT</a>
-          <a href="#" class="nav-social">IG</a>
+          <a href="#" class="nav-social">IG</a> -->
           <router-link to="/search" class="nav-search-btn" @click="menuOpen=false">
             <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.35-4.35"/></svg>
           </router-link>
