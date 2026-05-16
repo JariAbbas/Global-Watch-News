@@ -156,15 +156,24 @@ async function save() {
     saveMsg.value = { type: 'error', text: '❌ Please enter a YouTube URL before activating.' }
     return
   }
+  
   saving.value = true
   saveMsg.value = null
+  
+  // Pehle URL se ID nikaal lein
+  const finalEmbedId = extractYouTubeId(form.value.youtubeUrl)
+
   try {
-    await liveAPI.save({ ...form.value, embedId: embedId.value })
-    saveMsg.value = { type: 'success', text: '✅ Live settings saved! Website updated.' }
-  } catch {
-    // Save to localStorage as fallback when API not ready
-    localStorage.setItem('nw_live', JSON.stringify({ ...form.value, embedId: embedId.value }))
-    saveMsg.value = { type: 'success', text: '✅ Saved locally! (Connect Quarkus API to persist in DB)' }
+    await liveAPI.save({ 
+      youtubeUrl:  form.value.youtubeUrl,
+      title:       form.value.title,
+      description: form.value.description,
+      isActive:    form.value.isActive,
+      embedId:     embedId.value // Ye embedId.value wahi hai jo parseEmbed nikaal raha hai
+    })
+    saveMsg.value = { type: 'success', text: '✅ Settings saved on Supabase!' }
+  } catch (err) {
+    saveMsg.value = { type: 'error', text: '❌ Error: ' + err.message }
   } finally {
     saving.value = false
   }

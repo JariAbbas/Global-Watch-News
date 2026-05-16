@@ -149,7 +149,10 @@ const editing = ref(null)
 const defaultForm = () => ({ content: '', type: 'UPDATE', priority: 0, isActive: true, createdBy: '' })
 const form = ref(defaultForm())
 
+// Tickers list se active count nikaalte hain
 const activeCount = computed(() => tickers.value.filter(t => t.isActive).length)
+
+// Priority ke hisaab se sort karte hain, lekin list se koi gayab nahi hoga
 const sortedTickers = computed(() => [...tickers.value].sort((a, b) => b.priority - a.priority))
 
 const tickerTypes = [
@@ -165,15 +168,22 @@ function getPriorityClass(p) {
   return 'p-low'
 }
 
+// Fixed Date Function (Top-level)
 function formatDate(d) {
-  if (!d) return ''
-  return new Date(d).toLocaleDateString('en-US', { month: 'short', day: 'numeric', hour: '2-digit', minute: '2-digit' })
+  if (!d) return '—'
+  const date = new Date(d)
+  return isNaN(date) ? '—' : date.toLocaleDateString('en-US', { 
+    month: 'short', 
+    day: 'numeric', 
+    hour: '2-digit', 
+    minute: '2-digit' 
+  })
 }
 
 function openModal(ticker = null) {
   if (ticker) {
     editing.value = ticker
-    form.value = { content: ticker.content, type: ticker.type || 'UPDATE', priority: ticker.priority || 0, isActive: ticker.isActive, createdBy: ticker.createdBy || '' }
+    form.value = { ...ticker }
   } else {
     editing.value = null
     form.value = defaultForm()
@@ -185,8 +195,11 @@ function closeModal() { showModal.value = false; editing.value = null }
 
 async function loadTickers() {
   loading.value = true
-  try { tickers.value = await tickerAPI.getAll() }
-  catch { tickers.value = [] }
+  try { 
+    const data = await tickerAPI.getAll()
+    tickers.value = Array.isArray(data) ? data : (data?.content || [])
+  }
+  catch (e) { tickers.value = [] }
   finally { loading.value = false }
 }
 
@@ -201,22 +214,52 @@ async function saveTicker() {
     }
     await loadTickers()
     closeModal()
-  } catch (e) { alert('Error saving ticker. Is the API running?') }
-  finally { saving.value = false }
+  } catch (e) { 
+    // Agar API success hai par JSON error hai tab bhi reload karein
+    if (e.name === 'SyntaxError') {
+      await loadTickers()
+      closeModal()
+    } else {
+      alert('Error saving ticker.')
+    }
+  } finally { saving.value = false }
 }
 
 async function toggleTicker(ticker) {
   try {
-    if (ticker.isActive) await tickerAPI.disable(ticker.id)
-    else await tickerAPI.enable(ticker.id)
+    const originalStatus = ticker.isActive
+    // Optimistic Update: UI par foran change dikhayen
+    ticker.isActive = !originalStatus
+
+    if (originalStatus) {
+      await tickerAPI.disable(ticker.id)
+    } else {
+      await tickerAPI.enable(ticker.id)
+    }
+    // Refresh to get actual server state (disabledAt timestamps etc)
     await loadTickers()
-  } catch { alert('Error updating ticker') }
+  } catch (err) {
+    console.error("Toggle error", err)
+    // Rollback if failed
+    ticker.isActive = !ticker.isActive
+    alert('Error updating ticker status')
+  }
 }
 
 async function deleteTicker(id) {
-  if (!confirm('Delete this ticker permanently?')) return
-  try { await tickerAPI.remove(id); await loadTickers() }
-  catch { alert('Error deleting ticker') }
+  if (!confirm('Delete this ticker permanently from database?')) return
+  try {
+    await tickerAPI.remove(id)
+    // List se foran remove karein
+    tickers.value = tickers.value.filter(t => t.id !== id)
+  } catch (err) {
+    // Non-JSON response success check
+    if (err.message?.includes('JSON') || err.name === 'SyntaxError') {
+      tickers.value = tickers.value.filter(t => t.id !== id)
+    } else {
+      alert('Error deleting ticker')
+    }
+  }
 }
 
 onMounted(loadTickers)

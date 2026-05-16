@@ -1,3 +1,5 @@
+import { supabase } from './supabase'
+
 const BASE_URL = import.meta.env.VITE_API_URL || 'http://localhost:8080'
 
 async function request(path, options = {}) {
@@ -52,10 +54,36 @@ export const weatherAPI = {
   getWeather: (city) => request(`/weather?city=${encodeURIComponent(city)}`)
 }
 
+// export const liveAPI = {
+//   get:    ()     => request('/api/live'),
+//   save:   (data) => request('/api/live', { method: 'POST', body: JSON.stringify(data) }),
+//   update: (data) => request('/api/live', { method: 'PUT',  body: JSON.stringify(data) }),
+// }
+
+
 export const liveAPI = {
-  get:    ()     => request('/api/live'),
-  save:   (data) => request('/api/live', { method: 'POST', body: JSON.stringify(data) }),
-  update: (data) => request('/api/live', { method: 'PUT',  body: JSON.stringify(data) }),
+  async get() {
+    const { data, error } = await supabase
+      .from('live_settings')
+      .select('*')
+      .eq('id', 1)
+      .single()
+    
+    if (error) {
+      console.error("Fetch error:", error)
+      return null
+    }
+
+    // Mapping: Database columns -> Frontend properties
+    return {
+      id: data.id,
+      youtubeUrl: data.youtube_url, // DB is youtube_url
+      embedId: data.embed_id,       // DB is embed_id
+      title: data.title,
+      description: data.description,
+      isActive: data.is_active      // DB is is_active
+    }
+  }
 }
 
 export const videoAPI = {

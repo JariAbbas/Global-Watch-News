@@ -1,5 +1,6 @@
 import { createRouter, createWebHistory } from 'vue-router'
 import { isAuthenticated } from '../store/auth.js'
+import { setGlobalLoading } from '../store/loader.js' // Global loader state import ki
 
 const routes = [
   { path: '/',               name: 'Home',       component: () => import('../views/HomeView.vue') },
@@ -32,9 +33,25 @@ const router = createRouter({
   }
 })
 
+// ── BEFORE GUARD: Handles Auth & Starts Loading ──
 router.beforeEach((to, from, next) => {
-  if (to.meta.requiresAuth && !isAuthenticated.value) next('/admin')
-  else next()
+  // 1. Pehle page loading ko true karein
+  setGlobalLoading(true)
+
+  // 2. Authentication check karein
+  if (to.meta.requiresAuth && !isAuthenticated.value) {
+    next('/admin')
+  } else {
+    next()
+  }
+})
+
+// ── AFTER GUARD: Stops Loading After Component Mounts ──
+router.afterEach(() => {
+  // 600ms ka buffer lagaya hai taake dynamic components ko render hone ka time mile aur animation jhatke se khatam na ho
+  setTimeout(() => {
+    setGlobalLoading(false)
+  }, 2000)
 })
 
 export default router
